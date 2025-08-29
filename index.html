@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Meeting Summarizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+:root { --primary-color: #8013ec; }
+body { font-family: 'Manrope', sans-serif; background: #1a1122; }
+</style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white">
+
+<!-- POPUP PARA CORREO -->
+<div id="email-popup" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+  <div class="bg-[#241633] p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+    <h2 class="text-2xl font-bold mb-4 text-[var(--primary-color)]">Bienvenido</h2>
+    <p class="text-white/70 mb-6">Por favor ingresa tu correo para continuar</p>
+    <input type="email" id="user-email" placeholder="tu@email.com"
+      class="w-full p-3 rounded-lg text-black font-medium mb-4"/>
+    <button id="save-email"
+      class="w-full bg-[var(--primary-color)] hover:bg-[#6c10d3] rounded-lg py-3 font-bold transition-all">Guardar correo</button>
+  </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div id="main-content" class="hidden w-full max-w-xl mx-auto p-6 space-y-6">
+  <h1 class="text-3xl font-extrabold text-center text-[var(--primary-color)]">Transcribe y resume tus reuniones</h1>
+  <p class="text-center text-white/70">Recibirás un resumen conciso, tareas y fechas de entrega directamente en tu correo.</p>
+
+  <!-- SELECCIÓN TIPO -->
+  <div class="flex justify-center gap-4 mt-6">
+    <button id="btn-text" class="px-6 py-3 rounded-lg bg-[#362348] hover:bg-[#4a3163] transition-all font-bold">Escribir acta</button>
+    <button id="btn-audio" class="px-6 py-3 rounded-lg bg-[#362348] hover:bg-[#4a3163] transition-all font-bold">Subir audio</button>
+  </div>
+
+  <!-- FORMULARIO TEXTO -->
+  <div id="form-text-container" class="hidden mt-6 bg-[#241633] p-6 rounded-2xl space-y-4 shadow-lg">
+    <label for="minutes-text" class="text-white/80 font-medium">Pega el acta aquí</label>
+    <textarea id="minutes-text" placeholder="Comienza a escribir o pega el texto de tu reunión..."
+      class="w-full p-3 rounded-md bg-[#1a1122] border border-[#4a3163] text-white resize-y"></textarea>
+    <button id="send-text" class="w-full py-3 rounded-lg bg-[var(--primary-color)] hover:bg-[#6c10d3] font-bold transition-all">Enviar y resumir</button>
+  </div>
+
+  <!-- FORMULARIO AUDIO -->
+  <div id="form-audio-container" class="hidden mt-6 bg-[#241633] p-6 rounded-2xl space-y-4 shadow-lg">
+    <label for="audio-upload" class="flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-[#4a3163] rounded-lg cursor-pointer hover:border-[var(--primary-color)] transition-colors">
+      <span class="material-symbols-outlined text-4xl text-white/50 mb-2">upload_file</span>
+      <span class="text-white/70">Arrastra y suelta, o <span class="font-semibold text-[var(--primary-color)]">busca un archivo</span></span>
+      <span class="text-xs text-white/50 mt-1">MP3, MP4, WAV hasta 25MB</span>
+      <input type="file" id="audio-upload" class="hidden"/>
+    </label>
+    <button id="send-audio" class="w-full py-3 rounded-lg bg-[var(--primary-color)] hover:bg-[#6c10d3] font-bold transition-all">Enviar y resumir</button>
+  </div>
+
+  <!-- PROCESANDO -->
+  <div id="processing-message" class="hidden flex items-center justify-center gap-3 p-4 bg-[#1a1122] border border-[#4a3163] rounded-lg">
+    <svg class="animate-spin h-5 w-5 text-[var(--primary-color)]" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <span>Procesando... recibirás el resumen en tu correo.</span>
+  </div>
+</div>
+
+<script>
+const WEBHOOK_URL = "https://hook.us2.make.com/7tihgglehwu837dhd5xp7rrxrowxcfus";
+let userEmail = "";
+
+// POPUP CORREO
+document.getElementById("save-email").addEventListener("click", () => {
+  const emailInput = document.getElementById("user-email").value.trim();
+  if(!emailInput) return alert("El correo es obligatorio.");
+  userEmail = emailInput;
+  document.getElementById("email-popup").classList.add("hidden");
+  document.getElementById("main-content").classList.remove("hidden");
+});
+
+// SELECCIÓN TEXTO/AUDIO
+document.getElementById("btn-text").addEventListener("click", () => {
+  document.getElementById("form-text-container").classList.remove("hidden");
+  document.getElementById("form-audio-container").classList.add("hidden");
+});
+document.getElementById("btn-audio").addEventListener("click", () => {
+  document.getElementById("form-text-container").classList.add("hidden");
+  document.getElementById("form-audio-container").classList.remove("hidden");
+});
+
+// POST FORM DATA
+async function postFormData(fd){
+  document.getElementById("processing-message").classList.remove("hidden");
+  try{
+    const res = await fetch(WEBHOOK_URL, { method: "POST", body: fd });
+    const text = await res.text();
+    alert("Información enviada correctamente. Revisa tu correo.");
+    document.getElementById("processing-message").classList.add("hidden");
+  }catch(err){
+    alert("Error al enviar la información: "+err);
+    document.getElementById("processing-message").classList.add("hidden");
+  }
+}
+
+// ENVÍO TEXTO
+document.getElementById("send-text").addEventListener("click", () => {
+  const text = document.getElementById("minutes-text").value.trim();
+  if(!text) return alert("Debes pegar el acta primero.");
+  const fd = new FormData();
+  fd.append("type", "text");
+  fd.append("email", userEmail);
+  fd.append("text", text);
+  fd.append("filename", "");
+  fd.append("file_extension", "");
+  postFormData(fd);
+});
+
+// ENVÍO AUDIO
+document.getElementById("send-audio").addEventListener("click", () => {
+  const fileInput = document.getElementById("audio-upload");
+  if(!fileInput.files.length) return alert("Selecciona un archivo de audio primero.");
+  const fd = new FormData();
+  fd.append("type","audio");
+  fd.append("email", userEmail);
+  fd.append("file", fileInput.files[0], fileInput.files[0].name);
+  const extMatch = fileInput.files[0].name.match(/\.([a-zA-Z0-9]+)$/);
+  fd.append("file_extension", extMatch ? extMatch[1].toLowerCase() : "");
+  fd.append("filename", fileInput.files[0].name);
+  postFormData(fd);
+});
+</script>
+
+</body>
+</html>
