@@ -47,12 +47,15 @@ body { font-family: 'Manrope', sans-serif; background: #1a1122; }
 
   <!-- FORMULARIO AUDIO -->
   <div id="form-audio-container" class="hidden mt-6 bg-[#241633] p-6 rounded-2xl space-y-4 shadow-lg">
-    <label for="audio-upload" class="flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-[#4a3163] rounded-lg cursor-pointer hover:border-[var(--primary-color)] transition-colors">
+    <label for="audio-upload" 
+      class="flex flex-col items-center justify-center w-full p-6 border-2 border-dashed border-[#4a3163] rounded-lg cursor-pointer hover:border-[var(--primary-color)] transition-colors">
       <span class="material-symbols-outlined text-4xl text-white/50 mb-2">upload_file</span>
-      <span class="text-white/70">Arrastra y suelta, o <span class="font-semibold text-[var(--primary-color)]">busca un archivo</span></span>
+      <span class="text-white/70">Arrastra y suelta, o 
+        <span class="font-semibold text-[var(--primary-color)]">busca un archivo</span>
+      </span>
       <span class="text-xs text-white/50 mt-1">MP3, MP4, WAV hasta 25MB</span>
-      <input type="file" id="audio-upload" class="hidden"/>
     </label>
+    <input type="file" id="audio-upload" class="hidden"/>
     <button id="send-audio" class="w-full py-3 rounded-lg bg-[var(--primary-color)] hover:bg-[#6c10d3] font-bold transition-all">Enviar y resumir</button>
   </div>
 
@@ -133,3 +136,4 @@ document.getElementById("send-audio").addEventListener("click", () => {
 
 </body>
 </html>
+
