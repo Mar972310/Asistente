@@ -68,7 +68,7 @@ async function postFormData(fd) {
       body: fd
     });
     const text = await res.text();
-    document.getElementById("log").textContent = HTTP ${res.status}\n\n${text};
+    document.getElementById("log").textContent = `HTTP ${res.status}\n\n${text}`;
   } catch (err) {
     document.getElementById("log").textContent = "ERROR:\n" + err.toString();
   }
