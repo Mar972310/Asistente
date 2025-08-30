@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Test Webhook - Texto / Audio (multipart)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin:auto; }
+    form { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 6px; }
+    label { display:block; margin-top:10px; }
+    button { margin-top:10px; }
+    .log { white-space: pre-wrap; background:#f7f7f7; padding:10px; border-radius:6px; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <h2>Enviar TEXTO (multipart/form-data)</h2>
+  <form id="form-text">
+    <label>Correo electrónico (obligatorio):
+      <input type="email" id="emailText" name="email" required placeholder="usuario@dominio.com" style="width:100%;" />
+    </label>
+    <label>Texto de la reunión:
+      <textarea name="text" id="text" rows="5" style="width:100%;">En la reunión se acordó que Juan hará el informe y Ana revisará el presupuesto.</textarea>
+    </label>
+    <button type="submit">Enviar texto al webhook</button>
+  </form>
+
+  <h2>Enviar AUDIO (multipart/form-data)</h2>
+  <form id="form-audio">
+    <label>Correo electrónico (obligatorio):
+      <input type="email" id="emailAudio" name="email" required placeholder="usuario@dominio.com" style="width:100%;" />
+    </label>
+    <label>Selecciona archivo de audio (.mp3 .wav .m4a):
+      <input type="file" id="audioFile" name="file" accept="audio/*" />
+    </label>
+    <label>Nombre identificador (opcional):
+      <input type="text" id="audioLabel" name="label" placeholder="Reunion 2025-09-01" />
+    </label>
+    <button type="submit">Enviar audio al webhook</button>
+  </form>
+
+  <h3>Respuesta / Logs</h3>
+  <div id="log" class="log">Aquí verás la respuesta del servidor / errores.</div>
+
+<script>
+const WEBHOOK_URL = "https://hook.us2.make.com/7tihgglehwu837dhd5xp7rrxrowxcfus"; // <-- reemplaza por tu webhook
+
+function appendFileExtension(fd, fileInput) {
+  if (fileInput && fileInput.files && fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const name = file.name || "";
+    const extMatch = name.match(/\.([a-zA-Z0-9]+)$/);
+    if (extMatch) {
+      fd.append("file_extension", extMatch[1].toLowerCase());
+    } else {
+      fd.append("file_extension", "");
+    }
+    fd.append("filename", name);
+  } else {
+    fd.append("file_extension", "");
+    fd.append("filename", "");
+  }
+}
+
+async function postFormData(fd) {
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      body: fd
+    });
+    const text = await res.text();
+    document.getElementById("log").textContent = HTTP ${res.status}\n\n${text};
+  } catch (err) {
+    document.getElementById("log").textContent = "ERROR:\n" + err.toString();
+  }
+}
+
+// FORM: Texto
+document.getElementById("form-text").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const email = document.getElementById("emailText").value.trim();
+  if (!email) {
+    alert("El correo es obligatorio.");
+    return;
+  }
+  const fd = new FormData();
+  fd.append("type", "text");
+  fd.append("email", email); // <-- agregamos el email
+  const txt = document.getElementById("text").value || "";
+  fd.append("text", txt);
+  fd.append("filename", "");
+  fd.append("file_extension", "");
+  postFormData(fd);
+});
+
+// FORM: Audio
+document.getElementById("form-audio").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const email = document.getElementById("emailAudio").value.trim();
+  if (!email) {
+    alert("El correo es obligatorio.");
+    return;
+  }
+  const fileInput = document.getElementById("audioFile");
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert("Selecciona primero un archivo de audio.");
+    return;
+  }
+  const fd = new FormData();
+  fd.append("type", "audio");
+  fd.append("email", email); // <-- agregamos el email
+  const file = fileInput.files[0];
+  fd.append("file", file, file.name);
+  fd.append("label", document.getElementById("audioLabel").value || "");
+  appendFileExtension(fd, fileInput);
+  postFormData(fd);
+});
+</script>
+</body>
+</html>
