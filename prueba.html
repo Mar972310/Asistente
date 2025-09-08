@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Control de Internet para Aulas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7fafc;
+        }
+        .popup {
+            display: none;
+        }
+        .popup.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+<div class="flex h-screen">
+<aside class="w-64 bg-white shadow-md flex flex-col justify-between">
+<div>
+<div class="p-6 flex items-center space-x-2">
+<span class="material-icons text-3xl text-green-600">school</span>
+<h1 class="text-2xl font-bold text-gray-800">DocenteNet</h1>
+</div>
+<nav class="mt-8">
+<a class="flex items-center px-6 py-3 text-gray-700 bg-gray-100 border-l-4 border-green-500" href="#">
+<span class="material-icons">dashboard</span>
+<span class="ml-4">Dashboard</span>
+</a>
+<a class="flex items-center px-6 py-3 text-gray-500 hover:bg-gray-100 hover:border-l-4 hover:border-green-500" href="#">
+<span class="material-icons">calendar_today</span>
+<span class="ml-4">Calendario</span>
+</a>
+<a class="flex items-center px-6 py-3 text-gray-500 hover:bg-gray-100 hover:border-l-4 hover:border-green-500" href="#">
+<span class="material-icons">message</span>
+<span class="ml-4">Mensajes</span>
+</a>
+</nav>
+</div>
+<div class="p-6">
+<a class="flex items-center px-6 py-3 text-gray-500 hover:bg-gray-100" href="#">
+<span class="material-icons">settings</span>
+<span class="ml-4">Configuración</span>
+</a>
+<a class="flex items-center px-6 py-3 text-gray-500 hover:bg-gray-100" href="#">
+<span class="material-icons">help_outline</span>
+<span class="ml-4">Ayuda</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 p-8 overflow-y-auto">
+<header class="flex justify-between items-center mb-8">
+<div class="relative w-96">
+<input class="w-full pl-10 pr-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Buscar..." type="text"/>
+<span class="material-icons absolute left-3 top-2.5 text-gray-400">search</span>
+</div>
+<div class="flex items-center space-x-6">
+<span class="material-icons text-gray-600 cursor-pointer">notifications_none</span>
+<div class="flex items-center space-x-2">
+<img alt="Avatar del docente" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDboTPgaozn0chqpPB3MTwaw_8WcnBIu7SNU_hH-6VCWgzA7YTnexcPNOgv_-E5Qj2bzSEFpmPlqLbzsZPucDStd-9h2C93hs51sWVMm2JAHMWEgrKZb2x2uvi6L-QUaCMetxOFomPV9yZ7cRaf8exDe8Wsj4GLGK11lypbs-8ZMwMbq6x0Mg5zulFiqXGODtAV1qJ8NtD9yXNkYsTCplMPoD4ltJHwKD1KqsjoIfIsAisvOfsqbHVqj4gsmENVUvwxFWqEknamXH0"/>
+<span class="font-semibold text-gray-700">Prof. Ayudhita</span>
+</div>
+</div>
+</header>
+<div class="w-full bg-white p-6 rounded-lg shadow-md">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold text-gray-800">Calendario del Día</h2>
+<span class="text-lg font-semibold text-gray-600">Jueves, 9 de Noviembre</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-gray-50 rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition-shadow duration-200 cursor-pointer" onclick="showPopup('Álgebra', 'Lab 101')">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-sm font-semibold bg-green-100 text-green-800 px-3 py-1 rounded-full">8:00 AM - 9:30 AM</span>
+<span class="material-icons text-green-600">wifi</span>
+</div>
+<h3 class="font-bold text-xl text-gray-800 mt-4">Álgebra</h3>
+<p class="text-sm text-gray-500">Laboratorio 101</p>
+</div>
+<div class="mt-4 pt-4 border-t border-gray-200 text-right">
+<span class="text-xs text-gray-400">En curso</span>
+</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition-shadow duration-200 cursor-pointer" onclick="showPopup('Geometría', 'Lab 205')">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-sm font-semibold bg-gray-200 text-gray-700 px-3 py-1 rounded-full">10:00 AM - 11:30 AM</span>
+<span class="material-icons text-gray-400">wifi_off</span>
+</div>
+<h3 class="font-bold text-xl text-gray-800 mt-4">Geometría</h3>
+<p class="text-sm text-gray-500">Laboratorio 205</p>
+</div>
+<div class="mt-4 pt-4 border-t border-gray-200 text-right">
+<span class="text-xs text-gray-400">Próxima</span>
+</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition-shadow duration-200 cursor-pointer" onclick="showPopup('Cálculo', 'Lab 301')">
+<div>
+<div class="flex justify-between items-start">
+<span class="text-sm font-semibold bg-gray-200 text-gray-700 px-3 py-1 rounded-full">2:00 PM - 3:30 PM</span>
+<span class="material-icons text-gray-400">wifi_off</span>
+</div>
+<h3 class="font-bold text-xl text-gray-800 mt-4">Cálculo</h3>
+<p class="text-sm text-gray-500">Laboratorio 301</p>
+</div>
+<div class="mt-4 pt-4 border-t border-gray-200 text-right">
+<span class="text-xs text-gray-400">Más tarde</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="popup fixed inset-0 bg-black bg-opacity-60 items-center justify-center" id="internet-control-popup">
+<div class="bg-gray-50 p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-2xl font-bold text-gray-800" id="popup-title"></h3>
+<button class="text-gray-400 hover:text-gray-600" onclick="hidePopup()">
+<span class="material-icons">close</span>
+</button>
+</div>
+<p class="text-gray-600 mb-6">Seleccione una opción para gestionar el acceso a internet en este laboratorio.</p>
+<div class="space-y-4">
+<button class="w-full py-3 px-4 rounded-lg text-white bg-gray-700 hover:bg-gray-800 flex items-center justify-center space-x-2 transition-colors duration-200 shadow-md hover:shadow-lg">
+<span class="material-icons">wifi_off</span>
+<span>Deshabilitar Internet</span>
+</button>
+<button class="w-full py-3 px-4 rounded-lg text-white bg-gray-500 hover:bg-gray-600 flex items-center justify-center space-x-2 transition-colors duration-200 shadow-md hover:shadow-lg">
+<span class="material-icons">no_encryption_gmailerrorred</span>
+<span>Deshabilitar (permitir Moodle)</span>
+</button>
+<button class="w-full py-3 px-4 rounded-lg text-white bg-green-600 hover:bg-green-700 flex items-center justify-center space-x-2 transition-colors duration-200 shadow-md hover:shadow-lg">
+<span class="material-icons">wifi</span>
+<span>Reconectar Internet</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+        const popup = document.getElementById('internet-control-popup');
+        const popupTitle = document.getElementById('popup-title');
+        function showPopup(clase, laboratorio) {
+            popupTitle.innerText = `${clase} - ${laboratorio}`;
+            popup.classList.add('active');
+        }
+        function hidePopup() {
+            popup.classList.remove('active');
+        }
+    </script>
+
+</body></html>
